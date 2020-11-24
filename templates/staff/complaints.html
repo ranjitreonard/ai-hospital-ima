@@ -1,0 +1,81 @@
+{% extends 'layouts/staff_layout.html' %}
+{% load bootstrap4 %}
+{% load humanize %}
+{% block comp %}
+    active
+{% endblock %}
+{% block page_title %}
+    My Complaints
+{% endblock %}
+{% block title %}
+    My Complaints
+{% endblock %}
+{% block css %}
+    <style>
+        .complaints{
+            height: 250px;
+            overflow-y: auto;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="complaints">
+        {% if object_list %}
+            <div class="list-group-flush">
+                {% for object in object_list %}
+                    <div class="list-group-item list-group-item-action flex-column align-items-start {% if object.status == 0 %}border-left-primary{% elif object.status == 1 %}border-left-success{% else %}border-left-danger{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <small class="text-muted">{% if not object.is_seen %}<i class="fa fa-check text-primary" title="Sent"></i>{% elif object.is_seen %}<i class="fa fa-check-double text-success" title="Read"></i>{% endif %} {{ object.created_at |naturaltime }}</small>
+                        </div>
+                        <p class="mb-1">
+                            {{ object.complaint }}
+                        </p>
+                        <div class="row">
+                            <div class="col-11">
+                                {% if object.status == 1 %}
+                                    <small class="text-muted">Response: {{ object.review }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-1" align="right">
+                                {% if object.status == 0 %}
+                                    <a href="{% url 'staff:complaint-cancel' object.id %}" class="btn btn-sm btn-light">
+                                        <i class="fa fa-ban text-danger"></i>
+                                    </a>
+                                {% endif %}
+
+                                <button class="btn btn-sm btn-light" type="button" data-toggle="collapse" data-target="#multiCollapseExample{{ object.id }}" aria-expanded="false" aria-controls="multiCollapseExample{{ object.id }}">
+                                    <i class="fa fa-sort"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="collapse multi-collapse" id="multiCollapseExample{{ object.id }}">
+                            <div class="row small">
+                                <div class="col">Read: {% if object.is_seen %}{{ object.seen_at | naturaltime }}{% else %}--{% endif %}</div>
+                                <div class="col">Read by: {% if object.is_seen %}{{ object.seen_by.full_name }}{% else %}--{% endif %}</div>
+                                <div class="col">Reviewed: {% if object.status == 1 %}{{ object.review_at | naturaltime }}{% else %}--{% endif %}</div>
+                                <div class="col">Reviewed By: {% if object.status == 1 %}{{ object.review_by.full_name }}{% else %}--{% endif %}</div>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; font-size: xx-large">
+                <i class="fa fa-exclamation-circle text-danger fa-3x"></i> No Complaints yet!
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="bottom: 0; position: relative" class="mt-4">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.complaint }}
+            </div>
+            <button class="btn btn-sm btn-info btn-block">
+                <i class="fa fa-paper-plane"></i> Send
+            </button>
+        </form>
+    </div>
+{% endblock %}

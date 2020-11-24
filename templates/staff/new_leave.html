@@ -1,0 +1,28 @@
+{% extends 'layouts/staff_layout.html' %}
+{% load bootstrap4 %}
+{% block page_title %}
+New Leave
+{% endblock %}
+{% block title %}
+New Leave
+{% endblock %}
+{% block leave %}
+active
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <input type="submit" value="Submit" class="btn btn-sm btn-block btn-info">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

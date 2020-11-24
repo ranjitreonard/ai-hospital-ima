@@ -1,0 +1,18 @@
+{% extends 'layouts/admin_layout.html' %}
+{% load bootstrap4 %}
+{% block hr %}
+active
+{% endblock %}
+{% block page_title %}
+New Leave Period
+{% endblock %}
+{% block title %}
+New Leave Period
+{% endblock %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input type="submit" value="Submit" class="btn btn-sm btn-block btn-danger">
+    </form>
+{% endblock %}

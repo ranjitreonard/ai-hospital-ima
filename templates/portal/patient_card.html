@@ -1,0 +1,49 @@
+{% extends 'layouts/portal_layout.html' %}
+{% block bill %}
+    active
+{% endblock %}
+{% block title %}
+    {{ object.full_name }}
+{% endblock %}
+{% block page_title %}
+    {{ object.full_name }}
+{% endblock %}
+{% block btn %}
+    <button onclick="printDiv('id_card')" class="btn btn btn-sm btn-info"><i class="fa fa-print"></i> Print</button>
+{% endblock %}
+{% block css %}
+    <style>
+        .raise:hover{
+            box-shadow: 0 0 15px rgba(33,33,33,.2);
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row" id="id_card">
+        <div  class="col-5" style="border: 2px dashed black; height: 270px">
+            <div style="margin-top: 12px; border: 1px solid black; height: 240px; padding: 10px">
+                <div class="h3 text-primary">Ai Hospital - Patient Card</div>
+                <p class="text-dark">ID:      {{ object.patient_id }}</p>
+                <p class="text-dark">Full Name:       {{ object.full_name }}</p>
+                <p class="text-dark">Gender:      {{ object.gender }}</p>
+                <p class="text-dark">Date of Birth: {{ object.date_of_birth }}</p>
+                <p class="text-dark">Date Issued: {{ object.created_at.date }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        function printDiv(divName){
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'layouts/dept_layout.html' %}
+{% load bootstrap4 %}
+{% block pat %}
+active
+{% endblock %}
+{% block page_title %}
+Add Patient
+{% endblock %}
+{% block title %}
+Add Patient
+{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button class="btn btn-info btn-block">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

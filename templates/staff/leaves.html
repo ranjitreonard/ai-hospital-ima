@@ -1,0 +1,81 @@
+{% extends 'layouts/staff_layout.html' %}
+{% block leave %}
+    active
+{% endblock %}
+{% block title %}
+    My Leaves
+{% endblock %}
+{% block page_title %}
+    My Leaves
+{% endblock %}
+{% block btn %}
+    <a href="{% url 'staff:leave-add' %}" class="btn btn-sm btn-info">Request Leave</a>
+{% endblock %}
+{% block content %}
+    <div class="card card-header bg-info text-white">
+        <div class="row">
+            <div class="col border-right">
+                <div class="row">
+                    <div class="col">Days Allowed</div>
+                    <div class="col" align="right">{{ staff.total_number_of_days }}</div>
+                </div>
+            </div>
+            <div class="col border-right">
+                <div class="row">
+                    <div class="col">Days Left</div>
+                    <div class="col"  align="right">{{ staff.number_of_days_left }}</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col">Days Used</div>
+                    <div class="col" align="right">{{ staff.number_of_days_used }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-header border-0">
+            <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                <li class="nav-item"><a href="#com" data-toggle="tab" role="tab" aria-controls="com" aria-selected="false" class="nav-link active" id="com-tab">Current Period</a></li>
+                <li class="nav-item"><a href="#leave" data-toggle="tab" role="tab" aria-controls="leave" aria-selected="false" class="nav-link" id="leave-tab">All Periods</a></li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="com" role="tabpanel" aria-labelledby="com-tab">
+                    <div class="list-group-flush">
+                        {% for leave in staff.leaves.all %}
+                            <div  class="{% if leave.status == 0 %}border-left-primary{% elif leave.status == 1 %}border-left-success{% elif leave.status == 2 %}border-left-danger{% endif %} list-group-item list-group-item-action flex-column align-items-start {% if complaint.status == 0 %}border-left-primary{% elif complaint.status == 1 %}border-left-success{% elif complaint.status == 2 %}border-left-danger{% endif %}">
+                                <a href="#" class="d-flex w-100 card-link justify-content-between">
+                                    <h5 class="mb-1">{{ leave.start_date }} - {{ leave.end_date }} ({{ leave.number_of_days }} days)</h5>
+                                    <small class="text-muted">{{ leave.created_at }}</small>
+                                </a>
+                                <p class="mb-1">
+                                    {{ leave.purpose }}
+                                </p>
+
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="leave" role="tabpanel" aria-labelledby="leave-tab">
+                    <div class="list-group-flush">
+                        {% for leave in object_list %}
+                            <div  class="{% if leave.status == 0 %}border-left-primary{% elif leave.status == 1 %}border-left-success{% elif leave.status == 2 %}border-left-danger{% endif %} list-group-item list-group-item-action flex-column align-items-start {% if complaint.status == 0 %}border-left-primary{% elif complaint.status == 1 %}border-left-success{% elif complaint.status == 2 %}border-left-danger{% endif %}">
+                                <a href="#" class="d-flex w-100 card-link justify-content-between">
+                                    <h5 class="mb-1">{{ leave.start_date }} - {{ leave.end_date }} ({{ leave.number_of_days }} days)</h5>
+                                    <small class="text-muted">{{ leave.created_at }}</small>
+                                </a>
+                                <p class="mb-1">
+                                    {{ leave.purpose }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'layouts/dept_layout.html' %}
+{% block ward %}
+    active
+{% endblock %}
+{% block page_title %}
+    Wards
+{% endblock %}
+{% block title %}
+    Wards
+{% endblock %}
+{% block css %}
+    <style>
+        .raise:hover{
+            box-shadow: 0 0 15px rgba(33,33,33,.2);
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <div class="list-group">
+                {% for ward in object_list %}
+                    <div class="raise list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ ward.label }}</h5>
+                                    {#                                        <small class="text-muted">3 days ago</small>#}
+                                </div>
+                                <p class="mb-1">No of Beds: {{ ward.beds.count }}</p>
+                            </div>
+                            <div class="col-md-2 mt-2">
+                                <a href="{% url 'department:ward-details' ward.id %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-list"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

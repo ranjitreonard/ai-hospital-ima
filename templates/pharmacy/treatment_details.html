@@ -1,0 +1,242 @@
+{% extends 'layouts/pharm_layout.html' %}
+{% load static %}
+{% block treat %}
+    active
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" integrity="sha512-kq3FES+RuuGoBW3a9R2ELYKRywUEQv0wvPTItv3DSGqjpbNtGWVdvT8qwdKkqvPzT93jp8tSF4+oN4IeTEIlQA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" integrity="sha512-CbQfNVBSMAYmnzP3IC+mZZmYMP2HUnVkV4+PwuhpiMUmITtSpS7Prr3fNncV1RBOnWxzz4pYQ5EAGG4ck46Oig==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'bootstrap-select/bootstrap-select.css' %}">
+    <style>
+        .select2-hidden-accessible {
+            border: 0 !important;
+            clip: rect(0 0 0 0) !important;
+            height: 1px !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            position: absolute !important;
+            width: 1px !important
+        }
+        .select2-container--default .select2-selection--single,
+        .select2-selection .select2-selection--single {
+            border: 1px solid #d2d6de;
+            border-radius: 0;
+            padding: 6px 12px;
+            height: 34px
+        }
+
+        .select2-container--default .select2-selection--single {
+            background-color: #fff;
+            border: 1px solid #aaa;
+            border-radius: 4px
+        }
+
+        .select2-container .select2-selection--single {
+            box-sizing: border-box;
+            cursor: pointer;
+            display: block;
+            height: 28px;
+            user-select: none;
+            -webkit-user-select: none
+        }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-right: 10px
+        }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-left: 0;
+            padding-right: 0;
+            height: auto;
+            margin-top: -3px
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #444;
+            line-height: 28px
+        }
+
+        .select2-container--default .select2-selection--single,
+        .select2-selection .select2-selection--single {
+            border: 1px solid #d2d6de;
+            border-radius: 0 !important;
+            padding: 6px 12px;
+            height: 40px !important
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 26px;
+            position: absolute;
+            top: 6px !important;
+            right: 1px;
+            width: 20px
+        }
+    </style>
+{% endblock %}
+{% block page_title %}
+    {{ object.diagnosis.patient.full_name }}'s Treatment
+{% endblock %}
+{% block title %}
+    {{ object.diagnosis.patient.full_name }}'s Treatment
+{% endblock %}
+{% block btn %}
+    {% if object.pharmacy_prescription %}
+        {% if object.pharmacy_prescription.status == 0 %}
+            <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#confirmModal">Confirm</button>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'pharmacy:prescription-open' treatment_id=object.id patient_id=object.diagnosis.patient.id %}" class="btn btn-sm btn-success">Open</a>
+    {% endif %}
+    {% if object.pharmacy_prescription.is_paid %}
+        <span class="badge badge-success">PAID</span>
+    {% endif %}
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Prescription?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <small class="text-danger">Please make sure that all medicines are added to the list below before clicking on the confirm button</small>
+                    <div class="list-group">
+                        {% for med in object.pharmacy_prescription.medicines.all %}
+                            <div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-8">{{ med.medicine.name }}</div>
+                                    <div class="col-4">{{ med.quantity }} | GHS {{ med.amount }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col" align="right"><strong>Total: GHS {{ total }}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    {% if object.pharmacy_prescription.medicines.count > 0 %}
+                        <a href="{% url 'pharmacy:prescription-confirm' treatment_id=object.id pres_id=object.pharmacy_prescription.id %}" class="btn btn-primary">Confirm</a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <small>{{ object.prescription }}</small>
+    <div class="card mt-3 border-0">
+        <div class="card-header bg-success text-white">
+            <div class="row">
+                <div class="col" style="border-right: 2px solid lightblue">
+                    <div class="row">
+                        <div class="col-4">Patient ID</div>
+                        <div class="col-8">{{ object.diagnosis.patient.patient_id }}</div>
+                    </div>
+                </div>
+                <div class="col" style="border-right: 2px solid lightblue">
+                    <div class="row">
+                        <div class="col">Patient Name</div>
+                        <div class="col">{{ object.diagnosis.patient.full_name }}</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">Diagnosis</div>
+                        <div class="col">{{ object.diagnosis.diagnosis }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if object.pharmacy_prescription %}
+        <div class="table-responsive mt-5">
+            <span class="text-danger">{% if errors %}<i class="fa fa-ban text-danger"></i> {{ errors }}{% endif %}</span>
+            <table class="table table-bordered" id="dataTable">
+                <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Quantity</th>
+                    <th>Dosage</th>
+                    <th>Amount (GHS)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if object.pharmacy_prescription.status == 0 %}
+                    <tr>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <td>
+                                <select required name="medicine" id="id_medicine" class="custom-select" id="dropdown">
+                                    <option value="">------------</option>
+                                    {% for medicine in medicines %}
+                                        <option value="{{ medicine.id }}">{{ medicine.name }} | {{ medicine.units_left }} | GHS {{ medicine.selling_price_per_unit }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input required type="number" name="quantity" placeholder="Quantity" id="id_quantity" class="form-control">
+                            </td>
+                            <td>
+                                <input required type="text" name="dosage" id="id_dosage" placeholder="Dosage" class="form-control">
+                            </td>
+                            <td></td>
+                            <td>
+                                <button type="submit" class="btn btn-sm btn-info">Add</button>
+                            </td>
+                        </form>
+
+                    </tr>
+                {% endif %}
+
+                {% for medicine in object.pharmacy_prescription.medicines.all %}
+                    <tr>
+                        <td>{{ medicine.medicine.name }}</td>
+                        <td>{{ medicine.quantity }}</td>
+                        <td>{{ medicine.dosage }}</td>
+                        <td>{{ medicine.amount }}</td>
+                        <td>
+                            {% if object.pharmacy_prescription.status == 0 %}
+                                <a href="{% url 'pharmacy:prescribed-medicine-remove' treatment_id=object.id pres_id=object.pharmacy_prescription.id pm_id=medicine.id %}" class="btn btn-sm btn-light">
+                                    <i class="fa fa-ban text-danger"></i>
+                                </a>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <th>Total</th>
+                    <td>{{ total }}</td>
+                    <td>
+                        {% if object.pharmacy_prescription.status == 0 %}
+                            <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#confirmModal">Confirm</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $( "#dropdown" ).select2({
+            theme: "bootstrap"
+        });
+    </script>
+    <script src="{% static 'bootstrap-select/bootstrap-select.js' %}"></script>
+{% endblock %}

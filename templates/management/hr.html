@@ -1,0 +1,92 @@
+{% extends 'layouts/admin_layout.html' %}
+{% load humanize %}
+{% block hr %}
+    active
+{% endblock %}
+{% block page_title %}
+    Human Resource
+{% endblock %}
+{% block title %}
+    Human Resource
+{% endblock %}
+{% block btn %}
+    <a href="{% url 'management:leave-period-new' %}" class="btn btn-sm btn-danger">New Leave Period</a>
+{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                <li class="nav-item"><a href="#com" data-toggle="tab" role="tab" aria-controls="com" aria-selected="false" class="nav-link active" id="com-tab">Complaints ({{ complaints.count }})</a></li>
+                <li class="nav-item"><a href="#leave" data-toggle="tab" role="tab" aria-controls="leave" aria-selected="false" class="nav-link" id="leave-tab">Leave Requests ({{ leave_periods.count }})</a></li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="com" role="tabpanel" aria-labelledby="com-tab">
+                    <div class="list-group-flush">
+                        {% for complaint in complaints %}
+                            <div  class="list-group-item list-group-item-action flex-column align-items-start {% if complaint.status == 0 %}border-left-primary{% elif complaint.status == 1 %}border-left-success{% elif complaint.status == 2 %}border-left-danger{% endif %}">
+                                <a href="{% url 'management:complaint-details' complaint.id %}" class="d-flex w-100 card-link justify-content-between">
+                                    <h5 class="mb-1">{{ complaint.created_by.full_name }}</h5>
+                                    <small class="text-muted">{{ complaint.created_at |naturaltime }}</small>
+                                </a>
+                                <p class="mb-1">
+                                    {{ complaint.complaint }}
+                                </p>
+                                <div class="row">
+                                    <div class="col-11">
+                                        {% if object.status == 1 %}
+                                            <small class="text-muted">Response: {{ complaint.review }}</small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-1" align="right">
+                                        <button class="btn btn-sm btn-light" type="button" data-toggle="collapse" data-target="#multiCollapseExample{{ complaint.id }}" aria-expanded="false" aria-controls="multiCollapseExample{{ complaint.id }}">
+                                            <i class="fa fa-sort"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="collapse multi-collapse" id="multiCollapseExample{{ complaint.id }}">
+                                    <div class="row small">
+                                        {#                                <div class="col">Read: {% if object.is_seen %}{{ object.seen_at | naturaltime }}{% else %}--{% endif %}</div>#}
+                                        {#                                <div class="col">Read by: {% if object.is_seen %}{{ object.seen_by.full_name }}{% else %}--{% endif %}</div>#}
+                                        <div class="col">Reviewed: {% if complaint.status == 1 %}{{ complaint.review_at | naturaltime }}{% else %}--{% endif %}</div>
+                                        <div class="col">Reviewed By: {% if complaint.status == 1 %}{{ complaint.review_by.full_name }}{% else %}--{% endif %}</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="leave" role="tabpanel" aria-labelledby="leave-tab">
+                    <div class="list-group-flush">
+                        {% for lp in leave_periods %}
+                            <div  class="list-group-item list-group-item-action flex-column align-items-start {% if complaint.status == 0 %}border-left-primary{% elif complaint.status == 1 %}border-left-success{% elif complaint.status == 2 %}border-left-danger{% endif %}">
+                                <div class="d-flex w-100 card-link justify-content-between">
+                                    <h5 class="mb-1">{{ lp.start_date }} - {{ lp.end_date }}</h5>
+                                    <small class="text-muted">Days Allowed: {{ lp.days_allowed }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    Total Number of Days: {{ lp.number_of_days }}
+                                </p>
+                                <div class="row">
+                                    <div class="col-11">
+
+                                    </div>
+                                    <div class="col-1" align="right">
+                                        <a href="{% url 'management:leave-period-details' lp.id %}" class="btn btn-sm btn-light">
+                                            <i class="fa fa-list"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

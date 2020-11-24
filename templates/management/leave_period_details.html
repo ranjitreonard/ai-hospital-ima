@@ -1,0 +1,84 @@
+{% extends 'layouts/admin_layout.html' %}
+{% block page_title %}
+    {{ object.start_date }} - {{ object.end_date }}
+{% endblock %}
+{% block title %}
+    {{ object.start_date }} - {{ object.end_date }}
+{% endblock %}
+{% block hr %}
+    active
+{% endblock %}
+{% block content %}
+    <div class="card">
+        <div class="card-header border-0">
+            <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                <li class="nav-item"><a href="#com" data-toggle="tab" role="tab" aria-controls="com" aria-selected="false" class="nav-link active" id="com-tab">Staffs</a></li>
+                <li class="nav-item"><a href="#leave" data-toggle="tab" role="tab" aria-controls="leave" aria-selected="false" class="nav-link" id="leave-tab">Leaves</a></li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="com" role="tabpanel" aria-labelledby="com-tab">
+                    <div class="table-responsive">
+                        <table class="table table-borderless" id="dataTable">
+                            <thead>
+                            <tr>
+                                <th>Staff Name</th>
+                                <th>Number of Days Allowed</th>
+                                <th>Number of Days Used</th>
+                                <th>Number of Days Left</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for staff in object.staffs.all %}
+                                <tr>
+                                    <td>{{ staff.user.full_name }}</td>
+                                    <td>{{ staff.total_number_of_days }}</td>
+                                    <td>{{ staff.number_of_days_used }}</td>
+                                    <td>{{ staff.number_of_days_left }}</td>
+                                    <td>
+                                        <a href="" class="btn btn-sm btn-danger">
+                                            <i class="fa fa-list"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="leave" role="tabpanel" aria-labelledby="leave-tab">
+                    <div class="list-group-flush">
+                        {% for leave in leaves %}
+                            <div  class="{% if leave.status == 0 %}border-left-primary{% elif leave.status == 1 %}border-left-success{% elif leave.status == 2 %}border-left-danger{% endif %} list-group-item list-group-item-action flex-column align-items-start {% if complaint.status == 0 %}border-left-primary{% elif complaint.status == 1 %}border-left-success{% elif complaint.status == 2 %}border-left-danger{% endif %}">
+                                <a href="#" class="d-flex w-100 card-link justify-content-between">
+                                    <h5 class="mb-1">{{ leave.staff.user.full_name }} | {{ leave.start_date }} - {{ leave.end_date }} ({{ leave.number_of_days }} days)</h5>
+                                    <small class="text-muted">{{ leave.created_at }}</small>
+                                </a>
+                                <p class="mb-1">
+                                    {{ leave.purpose }}
+                                </p>
+                                <div class="row">
+                                <div class="col-10"></div>
+                                <div class="col-2">
+                                    {% if leave.status == 0 %}
+                                        <a title="Approve request" href="{% url 'management:leave-request-status' lpid=object.id lid=leave.id status=1 %}" class="btn btn-sm btn-light">
+                                            <i class="fa text-success fa-check"></i>
+                                        </a>
+                                        <a title="Reject request" href="{% url 'management:leave-request-status' lpid=object.id lid=leave.id status=2 %}" class="btn btn-sm btn-light">
+                                            <i class="fa text-danger fa-ban"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
